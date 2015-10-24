@@ -70,6 +70,25 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -a  (--aslr_mode)  <on|off>
       Specify whether to turn on ASLR for the package (on by default).
 
+  --backup <boolean>
+      Enable or disable the execution of backuptool.sh.
+      Disabled by default.
+
+  --override_device <device>
+      Override device-specific asserts. Can be a comma-separated list.
+
+  --override_prop <boolean>
+      Override build.prop items with custom vendor init.
+      Enabled when TARGET_UNIFIED_DEVICE is defined in BoardConfig
+
+  --override_boot_partition <string>
+      Override the partition where the boot image is installed.
+      Used for devices with a staging partition (Asus Transformer).
+
+  --mount_by_label <boolean>
+      Force the OTA package to mount and format System by label
+      Can be enabled by defining TARGET_SETS_FSTAB. Defaults to false.
+
   -2  (--two_step)
       Generate a 'two-step' OTA package, where recovery is updated
       first, so that any changes made to the system partition are done
@@ -137,6 +156,11 @@ OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = multiprocessing.cpu_count() // 2
 if OPTIONS.worker_threads == 0:
   OPTIONS.worker_threads = 1
+OPTIONS.backuptool = False
+OPTIONS.override_device = 'auto'
+OPTIONS.override_prop = False
+OPTIONS.override_boot_partition = ''
+OPTIONS.mount_by_label = False
 OPTIONS.two_step = False
 OPTIONS.no_signing = False
 OPTIONS.block_based = False
@@ -542,16 +566,16 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   if OPTIONS.override_prop:
     metadata = {"post-timestamp": GetBuildProp("ro.build.date.utc",
-                                               OPTIONS.info_dict),
+                                         OPTIONS.info_dict),
                 }
   else:
     metadata = {"post-build": CalculateFingerprint(
                                  oem_props, oem_dict, OPTIONS.info_dict),
-                "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
-                                           OPTIONS.info_dict),
+      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+                                   OPTIONS.info_dict),
                 "post-timestamp": GetBuildProp("ro.build.date.utc",
                                              OPTIONS.info_dict),
-                }
+  }
 
   device_specific = common.DeviceSpecificParams(
       input_zip=input_zip,
@@ -613,6 +637,7 @@ reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
+  script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   # Dump fingerprints
   script.Print("Target: %s" % CalculateFingerprint(
       oem_props, oem_dict, OPTIONS.info_dict))
@@ -620,15 +645,28 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
 
-  CopyInstallTools(output_zip)
-  script.UnpackPackageDir("install", "/tmp/install")
-  script.SetPermissionsRecursive("/tmp/install", 0, 0, 0o755, 0o644, None, None)
-  script.SetPermissionsRecursive("/tmp/install/bin", 0, 0, 0o755, 0o755, None, None)
-
   if OPTIONS.backuptool:
-    script.Mount("/system")
+    script.Mount("/system", OPTIONS.mount_by_label)
     script.RunBackup("backup")
-    script.Unmount("/system")
+    if not OPTIONS.mount_by_label:
+      script.Unmount("/system")
+
+  script.ShowProgress(0.5, 0)
+
+  if OPTIONS.wipe_user_data:
+    script.Print("Formatting /data")
+    script.FormatPartition("/data", OPTIONS.mount_by_label)
+
+  script.Print("#######################################");
+  script.Print("# _____            __  __  ______     #");
+  script.Print("#/\  __`\  /'\_/`\/\ \/\ \/\__  _\    #");
+  script.Print("#\ \ \/\ \/\  ``  \ \ ` \ \/_/\ \/    #");
+  script.Print("# \ \ \ \ \ \ \__\ \ \ . ` \ \ \ \    #");
+  script.Print("#  \ \ \_\ \ \ \_/\ \ \ \`\ \ \_\ \__ #");
+  script.Print("#   \ \_____\ \_\, \_\ \_\ \_\/\_____\#");
+  script.Print("#    \/_____/\/_/ \/_/\/_/\/_/\/_____/#");
+  script.Print("#                                     #");
+  script.Print("#######################################");
 
   system_progress = 0.75
 
@@ -664,13 +702,18 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     system_diff = common.BlockDifference("system", system_tgt, src=None)
     system_diff.WriteScript(script, output_zip)
   else:
+    script.Print("Formatting /system")
     script.FormatPartition("/system")
-    script.Mount("/system", recovery_mount_options)
-    if not has_recovery_patch:
-      script.UnpackPackageDir("recovery", "/system")
+    if not OPTIONS.mount_by_label:
+      script.Mount("/system", recovery_mount_options)
+#    if not has_recovery_patch:
+#      script.UnpackPackageDir("recovery", "/system")
+
+    script.Print("Extracting /system")
     script.UnpackPackageDir("system", "/system")
 
     symlinks = CopyPartitionFiles(system_items, input_zip, output_zip)
+    script.Print("Symlinking")
     script.MakeSymlinks(symlinks)
 
   boot_img = common.GetBootableImage("boot.img", "boot.img",
@@ -680,6 +723,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     def output_sink(fn, data):
       common.ZipWriteStr(output_zip, "recovery/" + fn, data)
       system_items.Get("system/" + fn)
+
+#    common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink,
+#                             recovery_img, boot_img)
 
     system_items.GetMetadata(input_zip)
     system_items.Get("system").SetPermissions(script)
@@ -707,20 +753,17 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
 
-  device_specific.FullOTA_PostValidate()
-
   if OPTIONS.backuptool:
-    script.ShowProgress(0.02, 10)
-    if block_based:
-      script.Mount("/system")
+    script.ShowProgress(0.2, 10)
     script.RunBackup("restore")
-    if block_based:
-      script.Unmount("/system")
-
-  script.ShowProgress(0.05, 5)
-  script.WriteRawImage("/boot", "boot.img")
 
   script.ShowProgress(0.2, 10)
+  script.Print("Flashing boot.img")
+  bootpartition = "/boot" if OPTIONS.override_boot_partition == "" else OPTIONS.override_boot_partition
+  script.WriteRawImage(bootpartition, "boot.img")
+
+  script.ShowProgress(0.1, 0)
+  script.Print("Enjoy OMNI ROM!");
   device_specific.FullOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
@@ -807,16 +850,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       source_version, OPTIONS.target_info_dict,
       fstab=OPTIONS.source_info_dict["fstab"])
 
-  if OPTIONS.override_prop:
-    metadata = {"post-timestamp": GetBuildProp("ro.build.date.utc",
-                                               OPTIONS.target_info_dict),
-                }
-  else:
-    metadata = {"pre-device": GetBuildProp("ro.product.device",
-                                           OPTIONS.source_info_dict),
-                "post-timestamp": GetBuildProp("ro.build.date.utc",
-                                               OPTIONS.target_info_dict),
-                }
+  metadata = {}
+  metadata["post-timestamp"] = GetBuildProp("ro.build.date.utc",
+                                            OPTIONS.info_dict)
+  if not OPTIONS.override_prop:
+    metadata["pre-device"] = GetBuildProp("ro.product.device",
+                                          OPTIONS.info_dict)
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
@@ -841,6 +880,9 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     target_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.target_info_dict)
     metadata["pre-build"] = source_fp
     metadata["post-build"] = target_fp
+
+    script.Mount("/system", OPTIONS.mount_by_label)
+    script.AssertSomeFingerprint(source_fp, target_fp)
 
   source_boot = common.GetBootableImage(
       "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT",
@@ -1377,6 +1419,10 @@ else
     script.WriteRawImage("/boot", "boot.img")
     print("writing full boot image (forced by two-step mode)")
 
+  if OPTIONS.wipe_user_data:
+    script.Print("Erasing user data...")
+    script.FormatPartition("/data", OPTIONS.mount_by_label)
+
   script.Print("Removing unneeded files...")
   system_diff.RemoveUnneededFiles(script, ("/system/recovery.img",))
   if vendor_diff:
@@ -1601,6 +1647,16 @@ def main(argv):
       else:
         raise ValueError("Cannot parse value %r for option %r - only "
                          "integers are allowed." % (a, o))
+    elif o in ("--backup"):
+      OPTIONS.backuptool = bool(a.lower() == 'true')
+    elif o in ("--override_device"):
+      OPTIONS.override_device = a
+    elif o in ("--override_prop"):
+      OPTIONS.override_prop = bool(a.lower() == 'true')
+    elif o in ("--override_boot_partition"):
+      OPTIONS.override_boot_partition = a
+    elif o in ("--mount_by_label"):
+      OPTIONS.mount_by_label = bool(a.lower() == 'true')
     elif o in ("-2", "--two_step"):
       OPTIONS.two_step = True
     elif o == "--no_signing":
@@ -1642,7 +1698,12 @@ def main(argv):
                                  "extra_script=",
                                  "worker_threads=",
                                  "aslr_mode=",
+                                 "backup=",
+                                 "override_device=",
+                                 "override_prop=",
+                                 "override_boot_partition=",
                                  "two_step",
+                                 "mount_by_label=",
                                  "no_signing",
                                  "block",
                                  "binary=",
