@@ -39,6 +39,7 @@ $(combo_var_prefix)RELEASE_CFLAGS := -O2
 else
 $(combo_var_prefix)RELEASE_CFLAGS := -O2 -fno-strict-aliasing
 endif
+$(combo_var_prefix)RELEASE_CFLAGS += -fvisibility=hidden -fvisibility-inlines-hidden
 $(combo_var_prefix)GLOBAL_CPPFLAGS :=
 $(combo_var_prefix)GLOBAL_LDFLAGS :=
 $(combo_var_prefix)GLOBAL_ARFLAGS := crsPD
