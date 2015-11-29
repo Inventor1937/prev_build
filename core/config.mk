@@ -260,6 +260,13 @@ endif
 TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
 include $(BUILD_SYSTEM)/uber.mk
 
+ifeq (,$(MALLOC_IMPL))
+  ifeq (true,$(strip $(TARGET_OPTIMIZE_FOR_SIZE)))
+    # We default to dlmalloc for low-memory devices
+    MALLOC_IMPL := dlmalloc
+  endif
+endif
+
 # $(1): os/arch
 define select-android-config-h
 build/core/combo/include/arch/$(1)/AndroidConfig.h
