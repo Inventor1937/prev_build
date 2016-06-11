@@ -200,6 +200,7 @@ endif
 ##########
 LOCAL_DISABLE_GRAPHITE := \
 	libavformat \
+	libavcodec \
 	libunwind \
 	libFFTEm \
 	libicui18n \
