@@ -77,12 +77,31 @@ $(info   TARGET_2ND_ARCH=$(TARGET_2ND_ARCH))
 $(info   TARGET_CPU_VARIANT=$(TARGET_CPU_VARIANT))
 $(info   TARGET_2ND_CPU_VARIANT=$(TARGET_2ND_CPU_VARIANT))
 $(info   ROM_TOOLCHAIN_USED=$(TARGET_GCC_VERSION_EXP))
-$(info   KERNEL_TOOLCHAIN=$(KERNEL_TOOLCHAIN))
-$(info   HOST_ARCH=$(HOST_ARCH))
-$(info   HOST_OS=$(HOST_OS))
-$(info   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
-$(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
-$(info   BUILD_ID=$(BUILD_ID))
-$(info   OUT_DIR=$(OUT_DIR))
-$(info ============================================)
+ifdef TARGET_GCC_VERSION_ARM
+$(info   KERNEL_TOOLCHAIN_USED=$(TARGET_GCC_VERSION_ARM))
+else
+$(info   KERNEL_TOOLCHAIN_USED=$(TARGET_GCC_VERSION))
+endif
+ifdef    CORTEX_TUNINGS
+$(info ${CLR_MAG}   CORTEX_TUNINGS=$(CORTEX_TUNINGS))
+else
+$(info ${CLR_MAG}   CORTEX_TUNINGS=true)
+endif
+ifdef    POLLY_OPTIMIZATION
+$(info ${CLR_MAG}   POLLY_OPTIMIZATION=$(POLLY_OPTIMIZATION))
+else
+$(info ${CLR_MAG}   POLLY_OPTIMIZATION=true)
+endif
+ifdef    ENABLE_SANITIZE
+$(info ${CLR_MAG}   ENABLE_SANITIZE=$(ENABLE_SANITIZE))
+else
+$(info ${CLR_MAG}   ENABLE_SANITIZE=true)
+endif
+$(info ${CLR_YLW}   HOST_ARCH=$(HOST_ARCH))
+$(info ${CLR_YLW}   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
+$(info ${CLR_YLW}   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
+$(info ${CLR_YLW}   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
+$(info ${CLR_YLW}   BUILD_ID=$(BUILD_ID))
+$(info ${CLR_YLW}   OUT_DIR=$(OUT_DIR))
+$(info ${CLR_CYN} ============================================)
 endif
