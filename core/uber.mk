@@ -76,7 +76,7 @@ LOCAL_DISABLE_STRICT := \
 	oatdump \
 	libart-disassembler \
 	linker \
-	camera.msm8084 \
+	camera.msm8996 \
 	mm-vdec-omx-test \
 	libc_malloc \
 	mdnsd \
@@ -105,7 +105,7 @@ LOCAL_FORCE_DISABLE_STRICT := \
 	libdiskconfig \
 	logd \
 	libjavacore \
-	camera.msm8084 \
+	camera.msm8996 \
 	libstagefright_webm \
 	libc_bionic_ndk \
 	libc_dns \
@@ -118,6 +118,7 @@ LOCAL_FORCE_DISABLE_STRICT := \
 	libandroidfw \
 	libosi \
 	libnetlink \
+	libRS \
 	clatd \
 	ip \
 	libc_nomalloc \
@@ -212,6 +213,7 @@ LOCAL_DISABLE_GRAPHITE := \
 	libstagefright_amrwbenc \
 	libpdfium \
 	libpdfiumcore \
+	libjemalloc \
 	libswscale \
 	libwebviewchromium \
 	libwebviewchromium_loader \
@@ -221,7 +223,8 @@ LOCAL_DISABLE_GRAPHITE := \
 	libwebrtc_spl \
 	libpcap \
 	libFraunhoferAAC \
-	libhwui
+	libhwui \
+	libmediandk
 
 GRAPHITE_FLAGS := \
 	-fgraphite \
@@ -256,7 +259,15 @@ DISABLE_SANITIZE_LEAK := \
 LOCAL_DISABLE_CORTEX := \
 	libc_dns \
 	libc_tzcode \
-	bluetooth.default 
+	bluetooth.default  \
+	libaudioutils \
+ 	libmcldSupport \
+ 	libmcldScript \
+	libpixelflinger \
+	libwebrtc_system_wrappers \
+	libwifi-service \
+ 	$(NOOP_BLUETOOTH) \
+ 	$(NO_OPTIMIZATIONS)
 
 ifeq (arm,$(TARGET_ARCH))
 CORTEX_FLAGS := \
