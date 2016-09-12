@@ -64,7 +64,7 @@ endif # CALLED_FROM_SETUP
 
 ifneq ($(PRINT_BUILD_CONFIG),)
 HOST_OS_EXTRA:=$(shell python -c "import platform; print(platform.platform())")
-$(info ============================================)
+$(info =====================================================================)
 $(info   PLATFORM_VERSION_CODENAME=$(PLATFORM_VERSION_CODENAME))
 $(info   PLATFORM_VERSION=$(PLATFORM_VERSION))
 $(info   CM_VERSION=$(CM_VERSION))
@@ -76,32 +76,35 @@ $(info   TARGET_ARCH_VARIANT=$(TARGET_ARCH_VARIANT))
 $(info   TARGET_2ND_ARCH=$(TARGET_2ND_ARCH))
 $(info   TARGET_CPU_VARIANT=$(TARGET_CPU_VARIANT))
 $(info   TARGET_2ND_CPU_VARIANT=$(TARGET_2ND_CPU_VARIANT))
-$(info   ROM_TOOLCHAIN_USED=$(TARGET_GCC_VERSION_EXP))
-ifdef TARGET_GCC_VERSION_ARM
-$(info   KERNEL_TOOLCHAIN_USED=$(TARGET_GCC_VERSION_ARM))
-else
-$(info   KERNEL_TOOLCHAIN_USED=$(TARGET_GCC_VERSION))
-endif
-ifdef    CORTEX_TUNINGS
-$(info   CORTEX_TUNINGS=$(CORTEX_TUNINGS))
-else
-$(info   CORTEX_TUNINGS=true)
-endif
-ifdef    POLLY_OPTIMIZATION
-$(info   POLLY_OPTIMIZATION=$(POLLY_OPTIMIZATION))
-else
-$(info   POLLY_OPTIMIZATION=true)
-endif
-ifdef    ENABLE_SANITIZE
-$(info 	 ENABLE_SANITIZE=$(ENABLE_SANITIZE))
-else
-$(info   ENABLE_SANITIZE=true)
-endif
 $(info   HOST_ARCH=$(HOST_ARCH))
-$(info   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
+$(info   HOST_OS=$(HOST_OS))
 $(info   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
 $(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
 $(info   BUILD_ID=$(BUILD_ID))
 $(info   OUT_DIR=$(OUT_DIR))
-$(info ============================================)
+$(info =====================================================================)
+ifdef TARGET_DRAGONTC_VERSION
+$(info   DRAGONTC_VERSION=$(DTC_VER))
+else
+$(info   CLANG_VERSION=$(LLVM_PREBUILTS_VERSION))
+endif
+ifdef TARGET_GCC_VERSION_ARM64_ROM
+$(info   ROM_TOOLCHAIN_USED=$(TARGET_GCC_VERSION_ARM64_ROM))
+else
+$(info   ROM_TOOLCHAIN_USED=$(TARGET_GCC_VERSION))
+endif
+ifdef TARGET_GCC_VERSION_ARM64
+$(info   KERNEL_TOOLCHAIN_USED=$(TARGET_GCC_VERSION_ARM64))
+else
+$(info   KERNEL_TOOLCHAIN_USED=$(TARGET_GCC_VERSION_ARM))
+endif
+ifdef TARGET_NDK_VERSION
+$(info   TARGET_NDK_VERSION=$(TARGET_NDK_VERSION))
+else
+$(info   TARGET_NDK_VERSION=$(SM_AND_VERSION))
+endif
+ifdef GCC_OPTIMIZATION_LEVELS
+$(info   OPTIMIZATIONS=$(GCC_OPTIMIZATION_LEVELS))
+endif
+$(info =====================================================================)
 endif

@@ -260,8 +260,8 @@ LOCAL_DISABLE_CORTEX := \
 
 ifeq (arm,$(TARGET_ARCH))
 CORTEX_FLAGS := \
-        -mcpu=cortex-a57.cortex-a53 \
-        -mtune=cortex-a57.cortex-a53
+        -mcpu=cortex-a57 \
+        -mtune=cortex-a57
 
 # Link binaries with Cortex-a15 string routines
 ifndef LOCAL_IS_HOST_MODULE
