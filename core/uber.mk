@@ -147,8 +147,7 @@ LOCAL_DISABLE_KRAIT := \
 
 KRAIT_FLAGS := \
 	-mcpu=cortex-a15 \
-	-mtune=cortex-a15 \
-	-mvectorize-with-neon-quad
+	-mtune=cortex-a15
 
 #############
 # GCC Tunings
@@ -159,6 +158,7 @@ LOCAL_DISABLE_GCCONLY := \
 	libwebviewchromium_loader \
 	libwebviewchromium_plat_support
 
+ifeq (arm,$(TARGET_ARCH))
 GCC_ONLY := \
 	-fira-loop-pressure \
 	-fforce-addr \
@@ -174,6 +174,22 @@ GCC_ONLY := \
 	-fweb \
 	-ffp-contract=fast \
 	-mvectorize-with-neon-quad
+else
+GCC_ONLY := \
+	-fira-loop-pressure \
+	-fforce-addr \
+	-funsafe-loop-optimizations \
+	-funroll-loops \
+	-ftree-loop-distribution \
+	-fsection-anchors \
+	-ftree-loop-im \
+	-ftree-loop-ivcanon \
+	-ffunction-sections \
+	-fgcse-las \
+	-fgcse-sm \
+	-fweb \
+	-ffp-contract=fast
+endif
 
 ##########
 # GRAPHITE
