@@ -20,7 +20,7 @@ CLANG_CONFIG_EXTRA_CONLYFLAGS := -std=gnu99
 CLANG_CONFIG_EXTRA_CPPFLAGS := -O3 -Qunused-arguments -Wno-unknown-warning-option -D__compiler_offsetof=__builtin_offsetof
 CLANG_CONFIG_EXTRA_LDFLAGS := -Wl,--sort-common
 else
-CLANG_CONFIG_EXTRA_CFLAGS :=
+CLANG_CONFIG_EXTRA_CFLAGS := -Wno-unknown-warning-option
 CLANG_CONFIG_EXTRA_CONLYFLAGS := -std=gnu99
 CLANG_CONFIG_EXTRA_CPPFLAGS :=
 CLANG_CONFIG_EXTRA_LDFLAGS :=

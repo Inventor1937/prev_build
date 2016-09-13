@@ -1,42 +1,42 @@
 ### Define paths
-CLANG_QCOM_CONFIG_arm_TARGET_TOOLCHAIN_PREFIX := $(TARGET_TOOLCHAIN_ROOT)/arm-linux-androideabi/bin
+CLANG_QCOM_CONFIG_arm_TARGET_TOOLCHAIN_PREFIX := $(TARGET_TOOLCHAIN_ROOT)/aarch64-linux-android-4.9/bin
 
-LLVM_PREBUILTS_PATH_QCOM := prebuilts/clang/linux-x86/host/llvm-Snapdragon_LLVM_for_Android_3.7/prebuilt/linux-x86_64/bin
-LLVM_PREBUILTS_HEADER_PATH_QCOM := $(LLVM_PREBUILTS_PATH_QCOM)/../lib/clang/3.7.1/include/
-LLVM_PREBUILTS_LIBRARIES_PATH_QCOM := $(LLVM_PREBUILTS_PATH_QCOM)/../lib/clang/3.7.1/lib
+LLVM_PREBUILTS_PATH_QCOM := prebuilts/clang/linux-x86/host/llvm-Snapdragon_LLVM_for_Android_3.8/prebuilt/linux-x86_64/bin
+LLVM_PREBUILTS_HEADER_PATH_QCOM := $(LLVM_PREBUILTS_PATH_QCOM)/../lib/clang/3.8.4/include/
+LLVM_PREBUILTS_LIBRARIES_PATH_QCOM := $(LLVM_PREBUILTS_PATH_QCOM)/../lib/clang/3.8.4/lib
 
-CLANG_QCOM_EXTRA_OPT_LIBGCC_LINK := \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.builtins-arm-android.a \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.asan-arm-android.a \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.builtins-arm.a \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.asan-arm.a
+ CLANG_QCOM_EXTRA_OPT_LIBGCC_LINK := \
+  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.builtins-aarch64-android.a \
+#  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.asan-aarch64-android.a \
+#  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.builtins-aarch64.a \
+#  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/libclang_rt.asan-aarch64.a
 
-CLANG_QCOM_EXTRA_OPT_LIBGCC := \
+ CLANG_QCOM_EXTRA_OPT_LIBGCC := \
   -L $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux/ \
-  -l clang_rt.builtins-arm-android \
-  -l clang_rt.asan-arm-android \
-  -l clang_rt.builtins-arm \
-  -l clang_rt.asan-arm
+  -l clang_rt.builtins-aarch64-android \
+  -l clang_rt.asan-aarch64-android \
+  -l clang_rt.builtins-aarch64 \
+  -l clang_rt.asan-aarch64
 
-CLANG_QCOM_EXTRA_OPT_LIBRARIES_LINK := \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.optlibc-krait-android.a \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.translib-arm-android.a \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.optlibc-krait.a \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.translib-arm.a
+ CLANG_QCOM_EXTRA_OPT_LIBRARIES_LINK := \
+  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.symphony-aarch64-android.a \
+  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.translib-aarch64-android.a \
+  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.symphony-aarch64-android.a \
+  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.translib-aarch64.a
 
 
-CLANG_QCOM_EXTRA_OPT_LIBRARIES := \
-  libclang_rt.optlibc-krait-android \
-  libclang_rt.translib-arm-android \
-  libclang_rt.optlibc-krait \
-  libclang_rt.translib-arm
+ CLANG_QCOM_EXTRA_OPT_LIBRARIES := \
+  libclang_rt.symphony-aarch64-android \
+  libclang_rt.translib-aarch64-android \
+  libclang_rt.symphony-aarch64 \
+  libclang_rt.translib-aarch64
 
 $(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCC += $(CLANG_QCOM_EXTRA_OPT_LIBRARIES_LINK)
 
 
 
 ### Define compile flags
-CLANG_QCOM_CONFIG_arm_TARGET_TRIPLE := arm-linux-androideabi
+CLANG_QCOM_CONFIG_arm_TARGET_TRIPLE := aarch64-linux-android
 #armv7a-linux-androideabi
 
 CLANG_QCOM_CONFIG_DEFAULT_FLAGS := \
@@ -55,7 +55,6 @@ CLANG_QCOM_CONFIG_EXTRA_FLAGS := \
   -Werror=strict-aliasing \
   -fuse-ld=qcld \
   -no-integrated-as \
-  -Xassembler -mcpu=cortex-a15 \
   -Wno-missing-field-initializers \
   -Wno-unused-local-typedef \
   -Wno-inconsistent-missing-override \
@@ -64,14 +63,10 @@ CLANG_QCOM_CONFIG_EXTRA_FLAGS := \
   -Wno-implicit-exception-spec-mismatch
   #-Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable
 
-ifeq ($(TARGET_CPU_VARIANT),krait)
-  clang_qcom_mcpu := -mcpu=krait
-  clang_qcom_muse-optlibc := -muse-optlibc
-  clang_qcom_mcpu_as := -mcpu=cortex-a15 -mfpu=neon-vfpv4 -mfloat-abi=softfp
-else ifeq ($(TARGET_CPU_VARIANT),scorpion)
-  clang_qcom_mcpu := -mcpu=scorpion
-  clang_qcom_mcpu_as := -mcpu=cortex-a8 -mfpu=neon-vfpv3 -mfloat-abi=softfp
-  clang_qcom_muse-optlibc :=
+ifeq ($(TARGET_CPU_VARIANT),kryo)
+  clang_qcom_mcpu := -mcpu=cortex-a57
+#  clang_qcom_muse-optlibc := -muse-optlibc
+  clang_qcom_mcpu_as := -march=armv8-a -mcpu=cortex-a57 -mfloat-abi=hard
 else
   $(info  )
   $(info QCOM_CLANG: warning no supported cpu detected.)
@@ -81,17 +76,17 @@ endif
 CLANG_QCOM_CONFIG_ALIGN_FLAGS := \
   -falign-functions -falign-labels -falign-loops
 
-CLANG_QCOM_CONFIG_MEM_FLAGS := \
-  -L $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/ \
-  -lclang_rt.optlibc-krait-android \
-  -lclang_rt.optlibc-krait
+# CLANG_QCOM_CONFIG_MEM_FLAGS := \
+#  -L $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/ \
+#  -lclang_rt.optlibc-krait-android \
+#  -lclang_rt.optlibc-krait
   #--whole-archive -lclang_rt.optlibc-krait-android --no-whole-archive
 
-CLANG_QCOM_CONFIG_PARALLEL_FLAGS := \
+ CLANG_QCOM_CONFIG_PARALLEL_FLAGS := \
   -L $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/ \
-  -l clang_rt.translib-arm-android \
-  -l clang_rt.translib-arm \
-  -fparallel 
+  -l clang_rt.translib-aarch64-android \
+  -l clang_rt.translib-aarch64 \
+  -fparallel-symphony
 
 ifeq ($(USE_CLANG_QCOM_LTO),true)
   CLANG_QCOM_CONFIG_LTO_FLAGS := \
@@ -108,7 +103,7 @@ endif
 
 # See documentation especialy 3.4.21 Math optimization.
 CLANG_QCOM_CONFIG_FLAGS := \
-  $(clang_qcom_mcpu) -mfpu=neon-vfpv4 -mfloat-abi=softfp -marm \
+  $(clang_qcom_mcpu) -march=armv8-a -mfloat-abi=hard \
   -fvectorize-loops \
   -fomit-frame-pointer \
   -foptimize-sibling-calls \
@@ -127,7 +122,7 @@ CLANG_QCOM_CONFIG_LDFLAGS := \
   $(CLANG_QCOM_CONFIG_FLAGS) \
   $(CLANG_QCOM_CONFIG_MEM_FLAGS) \
   $(CLANG_QCOM_CONFIG_LTO_FLAGS) \
-  -Wl,--gc-sections
+  -Wl,--sort-common
 
 CLANG_QCOM_CONFIG_Ofast_FLAGS := \
   -Ofast -fno-fast-math \
@@ -231,10 +226,8 @@ CLANG_QCOM_TARGET_GLOBAL_LDFLAGS := \
 
 ### Set toolchain
 CLANG_QCOM_EXTRA := \
-  -mllvm -aggressive-jt \
   -mllvm -arm-expand-memcpy-runtime=16 \
-  -mllvm -arm-opt-memcpy=1 \
-  $(clang_qcom_muse-optlibc)
+  -mllvm -arm-opt-memcpy=1
 
 CLANG_QCOM := $(LLVM_PREBUILTS_PATH_QCOM)/clang$(BUILD_EXECUTABLE_SUFFIX) $(CLANG_QCOM_EXTRA)
 CLANG_QCOM_CXX := $(LLVM_PREBUILTS_PATH_QCOM)/clang++$(BUILD_EXECUTABLE_SUFFIX) $(CLANG_QCOM_EXTRA)
@@ -397,3 +390,7 @@ CLANG_QCOM_GNU++11_MODULES +=
   #libcrypto \
   #libskia \
   #libc++abi
+
+CLANG_QCOM_DONT_USE_MODULES += \
+  libc_cxa \
+  libc++abi
