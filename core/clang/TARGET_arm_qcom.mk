@@ -122,7 +122,7 @@ CLANG_QCOM_CONFIG_LDFLAGS := \
   $(CLANG_QCOM_CONFIG_FLAGS) \
   $(CLANG_QCOM_CONFIG_MEM_FLAGS) \
   $(CLANG_QCOM_CONFIG_LTO_FLAGS) \
-  -Wl,--sort-common
+  -Wl,--gc-sections
 
 CLANG_QCOM_CONFIG_Ofast_FLAGS := \
   -Ofast -fno-fast-math \

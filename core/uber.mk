@@ -101,7 +101,10 @@ LOCAL_DISABLE_STRICT := \
 	libmincrypt \
 	libpcre \
 	libsepol \
-	mkbootimg
+	mkbootimg \
+	libexpat_static \
+	libpdfiumcore \
+	libpdfiumcore_32
 
 LOCAL_FORCE_DISABLE_STRICT := \
 	libziparchive-host \
@@ -128,7 +131,8 @@ LOCAL_FORCE_DISABLE_STRICT := \
 	libc_nomalloc \
 	linker \
 	libc_malloc \
-	libiprouteutil
+	libiprouteutil \
+	libqsap_sdk
 
 DISABLE_STRICT := \
 	-fno-strict-aliasing
