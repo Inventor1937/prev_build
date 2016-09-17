@@ -141,8 +141,7 @@ void ZipEntry::initNew(const char* fileName, const char* comment)
  *
  * Initializes the CDE and the LFH.
  */
-status_t ZipEntry::initFromExternal(const ZipFile*,
-    const ZipEntry* pEntry)
+status_t ZipEntry::initFromExternal(const ZipEntry* pEntry)
 {
     /*
      * Copy everything in the CDE over, then fix up the hairy bits.
@@ -693,3 +692,4 @@ void ZipEntry::CentralDirEntry::dump(void) const
     if (mFileComment != NULL)
         ALOGD("  comment: '%s'\n", mFileComment);
 }
+

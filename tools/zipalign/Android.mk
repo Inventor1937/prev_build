@@ -38,6 +38,4 @@ endif # BUILD_HOST_static
 
 LOCAL_MODULE := zipalign
 
-LOCAL_CFLAGS := -Werror
-
 include $(BUILD_HOST_EXECUTABLE)
