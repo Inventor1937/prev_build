@@ -104,7 +104,9 @@ LOCAL_DISABLE_STRICT := \
 	mkbootimg \
 	libexpat_static \
 	libpdfiumcore \
-	libpdfiumcore_32
+	libpdfiumcore_32 \
+	libqsap_sdk \
+	libbluetooth_jni
 
 LOCAL_FORCE_DISABLE_STRICT := \
 	libziparchive-host \
@@ -132,7 +134,7 @@ LOCAL_FORCE_DISABLE_STRICT := \
 	linker \
 	libc_malloc \
 	libiprouteutil \
-	libqsap_sdk
+	libz
 
 DISABLE_STRICT := \
 	-fno-strict-aliasing
@@ -169,7 +171,12 @@ LOCAL_DISABLE_GCCONLY := \
 	bluetooth.default \
 	libwebviewchromium \
 	libwebviewchromium_loader \
-	libwebviewchromium_plat_support
+	libwebviewchromium_plat_support \
+	libqsap_sdk \
+	libjemalloc \
+	libexpat \
+	libm \
+	libdl
 
 ifeq (arm,$(TARGET_ARCH))
 GCC_ONLY := \
@@ -232,7 +239,11 @@ LOCAL_DISABLE_GRAPHITE := \
 	libpcap \
 	libFraunhoferAAC \
 	libhwui \
-	libmediandk
+	libmediandk \
+	libqsap_sdk \
+	libexpat \
+	libm \
+	libdl
 
 GRAPHITE_FLAGS := \
 	-fgraphite \
@@ -274,6 +285,7 @@ LOCAL_DISABLE_CORTEX := \
 	libpixelflinger \
 	libwebrtc_system_wrappers \
 	libwifi-service \
+	*libc* \
  	$(NOOP_BLUETOOTH) \
  	$(NO_OPTIMIZATIONS)
 

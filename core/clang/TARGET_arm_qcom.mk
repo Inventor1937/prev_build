@@ -19,16 +19,12 @@ LLVM_PREBUILTS_LIBRARIES_PATH_QCOM := $(LLVM_PREBUILTS_PATH_QCOM)/../lib/clang/3
   -l clang_rt.asan-aarch64
 
  CLANG_QCOM_EXTRA_OPT_LIBRARIES_LINK := \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.symphony-aarch64-android.a \
   $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.translib-aarch64-android.a \
-  $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.symphony-aarch64-android.a \
   $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/libclang_rt.translib-aarch64.a
 
 
  CLANG_QCOM_EXTRA_OPT_LIBRARIES := \
-  libclang_rt.symphony-aarch64-android \
   libclang_rt.translib-aarch64-android \
-  libclang_rt.symphony-aarch64 \
   libclang_rt.translib-aarch64
 
 $(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCC += $(CLANG_QCOM_EXTRA_OPT_LIBRARIES_LINK)
@@ -36,8 +32,9 @@ $(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCC += $(CLANG_QCOM_EXTRA_OPT_LIBRARIES_LI
 
 
 ### Define compile flags
-CLANG_QCOM_CONFIG_arm_TARGET_TRIPLE := aarch64-linux-android
-#armv7a-linux-androideabi
+CLANG_QCOM_CONFIG_arm_TARGET_TRIPLE := aarch64-linux-gnu
+# CLANG_QCOM_CONFIG_arm_TARGET_TRIPLE := aarch64-linux-android
+# armv7a-linux-androideabi
 
 CLANG_QCOM_CONFIG_DEFAULT_FLAGS := \
   -ffunction-sections \
@@ -73,6 +70,11 @@ else
   $(exit)
 endif
 
+# Include SaberMod ARM Mode if not already used
+#ifndef SM_VENDOR
+  include $(BUILD_SYSTEM)/clang/arm-mode.mk
+#endif
+
 CLANG_QCOM_CONFIG_ALIGN_FLAGS := \
   -falign-functions -falign-labels -falign-loops
 
@@ -86,7 +88,7 @@ CLANG_QCOM_CONFIG_ALIGN_FLAGS := \
   -L $(LLVM_PREBUILTS_LIBRARIES_PATH_QCOM)/linux-propri_rt/ \
   -l clang_rt.translib-aarch64-android \
   -l clang_rt.translib-aarch64 \
-  -fparallel-symphony
+  -fparallel
 
 ifeq ($(USE_CLANG_QCOM_LTO),true)
   CLANG_QCOM_CONFIG_LTO_FLAGS := \
@@ -386,11 +388,69 @@ CLANG_QCOM_GNU++11_MODULES +=
 # Dont use CLANG Assembler. Use GCC Assembler instead
 # https://android-review.googlesource.com/#/c/110170/
 # Skia doesnt like the CLANG assembler
-#CLANG_QCOM_DONT_USE_INTEGRATED_AS_MODULES +=
+CLANG_QCOM_DONT_USE_INTEGRATED_AS_MODULES += \
+  libc_bionic
   #libcrypto \
   #libskia \
   #libc++abi
 
 CLANG_QCOM_DONT_USE_MODULES += \
   libc_cxa \
-  libc++abi
+  libc++abi \
+  libjemalloc \
+  libm \
+  libdl \
+  libcompiler_rt-extras \
+  libinit \
+  libfs_mgr \
+  init \
+  libc++_static \
+  libsquashfs_utils \
+  liblogwrap \
+  libcutils \
+  libbase \
+  libc_gdtoa \
+  libutils \
+  liblog \
+  libpcre \
+  mkbootfs \
+  libmincrypt \
+  libselinux \
+  checkpolicy \
+  libext4_utils_static \
+  libext2_blkid \
+  libext2_uuid_static \
+  libsparse_static \
+  libz \
+  libc++ \
+  libinit_oneplus3 \
+  libbatteryservice \
+  adbd \
+  libadbd \
+  healthd \
+  libbinder \
+  libdrm \
+  mkbootfs \
+  libadf \
+  libminui \
+  libpng \
+  libstdc++ \
+  libsuspend \
+  libhealthd.cm \
+  libmemtrack \
+  libhardware \
+  libaapt \
+  aapt \
+  libunwind_llvm \
+  libunwind \
+  libandroidfw \
+  libexpat \
+  libbacktrace \
+  libziparchive \
+  libnativehelper \
+  libnetutils \
+  libgui \
+  libsync \
+  libprotobuf-cpp-lite \
+  libui \
+  liblzf
