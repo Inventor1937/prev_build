@@ -79,9 +79,9 @@ ifeq ($(strip $(TARGET_ARCH)),arm)
           else
             LOCAL_CFLAGS := -marm
           endif
-          ifeq ($(strip $(LOCAL_CLANG)),true)
-            LOCAL_CLANG := false
-          endif
+#          ifeq ($(strip $(LOCAL_CLANG)),true)
+#            LOCAL_CLANG := false
+#          endif
         endif
         ifeq ($(strip $(LOCAL_ARM_MODE)),thumb)
           ifdef LOCAL_CFLAGS
@@ -99,9 +99,9 @@ ifeq ($(strip $(TARGET_ARCH)),arm)
           LOCAL_CFLAGS := -marm
         endif
       endif
-      ifeq ($(strip $(LOCAL_CLANG)),true)
-          LOCAL_CLANG := false
-      endif
+#      ifeq ($(strip $(LOCAL_CLANG)),true)
+#          LOCAL_CLANG := false
+#      endif
     endif
   endif
 endif
@@ -115,9 +115,9 @@ ifeq ($(strip $(TARGET_ARCH)),arm64)
          # Set to arm64 mode
         LOCAL_ARM_MODE := arm64
       endif
-      ifeq ($(strip $(LOCAL_CLANG)),true)
-        LOCAL_CLANG := false
-      endif
+#      ifeq ($(strip $(LOCAL_CLANG)),true)
+#        LOCAL_CLANG := false
+#      endif
     endif
   endif
 endif
