@@ -151,6 +151,8 @@ CLANG_QCOM_CONFIG_arm_UNKNOWN_CFLAGS := \
   -fno-strict-volatile-bitfields \
   -fno-unswitch-loops \
   -fno-if-conversion \
+  -fno-tree-sra \
+  -finline-limit=64 \
   -Wl,--icf=safe
 
 
@@ -390,7 +392,7 @@ CLANG_QCOM_GNU++11_MODULES +=
 # Skia doesnt like the CLANG assembler
 CLANG_QCOM_DONT_USE_INTEGRATED_AS_MODULES += \
   libc_bionic
-  #libcrypto \
+#  libcrypto \
   #libskia \
   #libc++abi
 
@@ -453,4 +455,127 @@ CLANG_QCOM_DONT_USE_MODULES += \
   libsync \
   libprotobuf-cpp-lite \
   libui \
-  liblzf
+  liblzf \
+  libinput \
+  libinputflinger \
+  libcrypto \
+  libwpa_client \
+  libcamera_metadata \
+  libcamera_parameters \
+  libjpeg_static \
+  libhardware_legacy \
+  libcamera_client \
+  libicuuc \
+  libskia \
+  libicui18n \
+  libft2 \
+  libgif \
+  libwebp-decode \
+  libwebp-encode \
+  libsfntly \
+  libsqlite3_android \
+  libsqlite \
+  libETC1 \
+  libsonivox \
+  libssl \
+  libpowermanager \
+  libspeexresampler \
+  libcommon_time_client \
+  libmedia \
+  libstagefright_foundation \
+  libavmediaextentions \
+  libaudioutils \
+  libnbaio \
+  libmedia_helper \
+  libusbhost \
+  libharfbuzz_ng \
+  libpdfiumcore \
+  libimg_utils \
+  libpdfium \
+  libnetd_client \
+  libradio \
+  libradio_metadata \
+  libsoundtrigger \
+  libminikin \
+  libnativebridge \
+  libprocessgroup \
+  libLLVMMCDisassembler \
+  libhwui \
+  libbcinfo \
+  libLLVMMC \
+  libLLVMMCParser \
+  libLLVMAsmParser \
+  libLLVMOption \
+  libLLVMSupport \
+  libbccRenderscript \
+  libbccSupport \
+  libRSDispatch \
+  libRScpp \
+  libcompiler_rt \
+  libtinyxml2 \
+  libpower \
+  libbt-qcom_sbc_decoder \
+  libbt-brcm_bta \
+  libbt-brcm_gki \
+  libbt-hci \
+  libbt-utils \
+  libjni_latinime_common_static \
+  libcrypto \
+  libjni_pacprocessor \
+  libcrypto \
+  libjpeg \
+  libjni_latinime \
+  libjpeg_static \
+  libvterm \
+  libframesequence \
+  libpac \
+  libgiftranscode \
+  libunwindbacktrace \
+  libwebviewchromium_loader \
+  libjni_terminal \
+  libwebviewchromium_plat_support \
+  libexpat_static \
+  libdrmframeworkcommon \
+  app_process \
+  libmediautils \
+  libwilhelm \
+  libstagefright \
+  libogg \
+  libdrmframework \
+  libopus \
+  libstagefright_omx \
+  libstagefright_yuv \
+  libvorbisidec \
+  libstagefright_enc_common \
+  libstagefright_avc_common \
+  libstagefright_color_conversion \
+  libstagefright_aacenc \
+  libstagefright_webm \
+  libstagefright_matroska \
+  libstagefright_timedtext \
+  libvpx \
+  libstagefright_mpeg2ts \
+  libwebm \
+  libFLAC \
+  libstagefright_id3 \
+  libavextensions \
+  libeffects \
+  libstagefright_http_support \
+  libopensles_helper \
+  libOpenSLESUT \
+  libsigchain \
+  atrace \
+  bcc \
+  libext2_com_err \
+  blkid \
+  libext2_uuid \
+  libext2fs \
+  libext2_e2p \
+  libnl \
+  bootanimation \
+  bugreport \
+  dalvikvm \
+  clatd \
+  curl \
+  debuggerd \
+  libcurl
